@@ -1,0 +1,67 @@
+<html>
+
+<head>
+</head>
+
+<body>
+    <h1>Welcome!</h1>
+
+    <div ng-app="app.Angular.Controllers">
+        <div ng-controller="MainController as main">
+            <h1>The title is: {{main.message}}</h1>
+            <div>
+                <table>
+                    <th>
+                        <tr>
+                            <td>Name</td>
+                            <td>Last name</td>
+                            <td></td>
+                            <td>Git Person Name</td>
+                            <td>Git Person Email</td>
+                            <td></td>
+                        </tr>
+                    </th>
+                    <tbody>
+                        <tr>
+                            <td>{{main.person.firstName}}</td>
+                            <td>{{main.person.lastName}}</td>
+                            <td>{{main.message}}</td>
+                            <td>{{main.gitPerson.name}}</td>
+                            <td>{{main.gitPerson.email}}</td>
+                            <td><img ng-src="{{main.person.imageSrc}}" title="{{main.person.firstName}} {{main.person.lastName}}" alt="Image not accessible" /> </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+        <div ng-controller="SubController as main">
+            <h1>The title is: {{main.message}}</h1>
+        </div>
+    </div>
+
+    <div id="ctrls" ng-app="app.Angular.Ctrls">
+        <div ng-controller="MainCtrl as main">
+            <h1>The title is: {{main.message}}</h1>
+        </div>
+    </div>
+
+    <!--External Scripts-->
+    <script src="scripts/ExternalScripts/Angular/angular.js"></script>
+    <script src="scripts/ExternalScripts/JQuery/jquery-3.0.0.js"></script>
+    <!--Module Registration-->
+    <script src="scripts/app.js"></script>
+    <!--Controllers Registration-->
+    <script src="scripts/ApplicationScripts/Angular/Controllers/MainController.js"></script>
+    <script src="scripts/ApplicationScripts/Angular/Controllers/SubController.js"></script>
+    <script src="scripts/ApplicationScripts/Angular/Controllers/MainCtrl.js"></script>
+    <!--Models Registration-->
+    <script src="scripts/ApplicationScripts/Angular/Models/Person.js"></script>
+    <!--Services registration-->
+    <script src="scripts/ApplicationScripts/Angular/Services/PersonService.js"></script>
+    <!--onLoad-->
+    <script>
+        angular.bootstrap(document.getElementById("ctrls"), ['app.Angular.Ctrls']);
+    </script>
+</body>
+
+</html>

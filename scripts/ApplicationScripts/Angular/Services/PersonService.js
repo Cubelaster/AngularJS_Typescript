@@ -1,0 +1,34 @@
+var app;
+(function (app) {
+    var Angular;
+    (function (Angular) {
+        var Services;
+        (function (Services) {
+            var PersonService = (function () {
+                function PersonService($http) {
+                    var service = this;
+                    service.http = $http;
+                }
+                PersonService.prototype.fetchUserDataHttp = function () {
+                    var promise = this.http.get('https://api.github.com/users/robconery');
+                    return promise;
+                };
+                PersonService.prototype.fetchUserData = function () {
+                    this.fetchUserDataHttp().then(this.returnResult, this.returnError);
+                };
+                PersonService.prototype.returnResult = function (data) {
+                    return data;
+                };
+                PersonService.prototype.returnError = function (data) {
+                    return "Error occured!";
+                };
+                PersonService.$inject = ["$http"];
+                return PersonService;
+            }());
+            Services.PersonService = PersonService;
+            angular
+                .module("app.Angular.Services")
+                .service("PersonService", PersonService);
+        })(Services = Angular.Services || (Angular.Services = {}));
+    })(Angular = app.Angular || (app.Angular = {}));
+})(app || (app = {}));
