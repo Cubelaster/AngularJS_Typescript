@@ -11,6 +11,7 @@ var app;
                     this.personService = personService;
                     var controller = this;
                     controller.title = "Main Controller";
+                    this.message = "Hello " + this.searchedUserName + " !";
                     controller.person = new app.core.Models.Person("Scott", "Allen", "http://odetocode.com/Images/scott_allen_2.jpg");
                     controller.fetchUserDataPromise(function (data) {
                         if ($.type(data) === "string") {

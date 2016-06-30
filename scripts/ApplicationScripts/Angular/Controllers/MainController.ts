@@ -9,12 +9,14 @@ namespace app.Angular.Controllers {
         message: string;
         person: app.core.Models.Person;
         gitPerson;
+        searchedUserName: string;
 
         static $inject = ["PersonService"];
         constructor(private personService: app.Angular.Services.PersonService) {
             var controller = this;
 
             controller.title = "Main Controller";
+            this.message = "Hello " + this.searchedUserName + " !";
             controller.person = new app.core.Models.Person("Scott", "Allen", "http://odetocode.com/Images/scott_allen_2.jpg");
 
             controller.fetchUserDataPromise(function (data) {
