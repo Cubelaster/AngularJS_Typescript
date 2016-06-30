@@ -11,7 +11,7 @@ namespace app.Angular.Services {
         }
 
         fetchUserDataHttp(): any {
-            var promise = this.http.get('https://api.github.com/users/robconery');
+            var promise = this.http.get('https://api.github.com/users/angular');
             return promise;
         }
 

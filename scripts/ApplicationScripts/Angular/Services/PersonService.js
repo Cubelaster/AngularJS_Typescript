@@ -10,7 +10,7 @@ var app;
                     service.http = $http;
                 }
                 PersonService.prototype.fetchUserDataHttp = function () {
-                    var promise = this.http.get('https://api.github.com/users/robconery');
+                    var promise = this.http.get('https://api.github.com/users/angular');
                     return promise;
                 };
                 PersonService.prototype.fetchUserData = function () {
