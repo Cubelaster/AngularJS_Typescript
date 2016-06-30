@@ -19,6 +19,12 @@ namespace app.Angular.Services {
             this.fetchUserDataHttp().then(this.returnResult, this.returnError);
         }
 
+        fetchUserDataPromiseForUser(searchedUser: string): any {
+            var url : string = 'https://api.github.com/users/' + searchedUser;
+            var promise = this.http.get(url);
+            return promise;
+        }
+
         returnResult(data):any {
             return data;
         }

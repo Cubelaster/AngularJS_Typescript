@@ -16,6 +16,11 @@ var app;
                 PersonService.prototype.fetchUserData = function () {
                     this.fetchUserDataHttp().then(this.returnResult, this.returnError);
                 };
+                PersonService.prototype.fetchUserDataPromiseForUser = function (searchedUser) {
+                    var url = 'https://api.github.com/users/' + searchedUser;
+                    var promise = this.http.get(url);
+                    return promise;
+                };
                 PersonService.prototype.returnResult = function (data) {
                     return data;
                 };
