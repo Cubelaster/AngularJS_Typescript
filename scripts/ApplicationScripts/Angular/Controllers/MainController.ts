@@ -4,7 +4,24 @@ declare var $: JQueryStatic;
 
 namespace app.Angular.Controllers {
 
-    class MainController implements app.Angular.ControllerContracts.IAngularController {
+    // var ctrlModule = angular.module('app.Angular.Controllers');
+
+    // export class MainControllerSearchDirective implements ng.IDirective {
+    //     public restrict: string = "E";
+    //     public replace: boolean = true;
+    //     public controller: string = 'MainController';
+    //     public controllerAs: string = 'main';
+    //     public scope = {};
+    // }
+
+    // ctrlModule.directive("mainCtrlSearch", [() => new app.Angular.Controllers.MainControllerSearchDirective()]);
+
+    // export interface ISearchScope extends ng.IScope {
+    //     mainCtrl: MainController;
+    //     searchResult: any;
+    // }
+
+    export class MainController implements app.Angular.ControllerContracts.IAngularController {
         title: string;
         private _message: string;
         person: app.core.Models.Person;
@@ -12,22 +29,15 @@ namespace app.Angular.Controllers {
         private _searchedUserName: string;
         private _gravatarLink: string = "http://www.gravatar.com/avatar/";
         repoSortOrder: string = "-stargazers_count";
-        controllerInstance = this;
+        repos: any;
 
-        static $inject = ["PersonService"];
-        constructor(private personService: app.Angular.Services.PersonService) {
+        static $inject = ["$scope", "PersonService"];
+        constructor(private $scope: app.Angular.Scope.ISearchScope,
+            private personService: app.Angular.Services.PersonService) {
             var controller = this;
 
             controller.title = "Main Controller";
-            // controller.fetchUserDataPromise(userDataCallback);
-
-            function userDataCallback(data: any) {
-                if ($.type(data) === "string") {
-                    controller.message = data;
-                } else {
-                    controller.gitPerson = data;
-                }
-            }
+            controller.fetchUserDataPromise(controller.userDataCallback);
         }
 
         fetchUserDataPromise(successCallback: Function): void {
@@ -36,12 +46,15 @@ namespace app.Angular.Controllers {
             })
         }
 
-        searchUser(searchedUserName: string): void {
-            // var service = new app.Angular.Services.PersonService("$http");
-            // var controller = new MainController(service);
-            this.personService.fetchUserDataPromiseForUser(searchedUserName).success(function (data, status) {
-                controllerInstance.userDataCallback(data); //ovdje jebemu
-            })
+        public searchUser(searchedUserName: string): void {
+            this.personService.fetchUserDataPromiseForUser(searchedUserName)
+                .then((response: ng.IHttpPromiseCallbackArg<any>) => {
+                    this.$scope.searchResult = response.data;
+                    this.personService.fetchReposData(this.$scope.searchResult.repos_url)
+                        .then((response: ng.IHttpPromiseCallbackArg<any>) => {
+                        this.repos = response.data;
+                    })
+                });
         }
 
         nvl(inputData: any, replaceData?: any): any {
@@ -52,12 +65,13 @@ namespace app.Angular.Controllers {
             }
         }
 
-        userDataCallback(data: any) {
-                if ($.type(data) === "string") {
-                    this.message = data;
-                } else {
-                    this.gitPerson = data;
-                }
+        public userDataCallback = (data: any) => {
+            var controller = this;
+            if ($.type(data) === "string") {
+                controller.message = data;
+            } else {
+                controller.gitPerson = data;
+            }
         }
 
         get gravatarLink(): string {

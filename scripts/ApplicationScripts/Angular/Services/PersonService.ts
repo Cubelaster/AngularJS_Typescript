@@ -25,6 +25,10 @@ namespace app.Angular.Services {
             return promise;
         }
 
+        fetchReposData(repoLink: string): any {
+            return this.http.get(repoLink);
+        }
+
         returnResult(data):any {
             return data;
         }

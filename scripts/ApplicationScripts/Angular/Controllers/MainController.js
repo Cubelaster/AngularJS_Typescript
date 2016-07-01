@@ -6,23 +6,38 @@ var app;
     (function (Angular) {
         var Controllers;
         (function (Controllers) {
+            // var ctrlModule = angular.module('app.Angular.Controllers');
+            // export class MainControllerSearchDirective implements ng.IDirective {
+            //     public restrict: string = "E";
+            //     public replace: boolean = true;
+            //     public controller: string = 'MainController';
+            //     public controllerAs: string = 'main';
+            //     public scope = {};
+            // }
+            // ctrlModule.directive("mainCtrlSearch", [() => new app.Angular.Controllers.MainControllerSearchDirective()]);
+            // export interface ISearchScope extends ng.IScope {
+            //     mainCtrl: MainController;
+            //     searchResult: any;
+            // }
             var MainController = (function () {
-                function MainController(personService) {
+                function MainController($scope, personService) {
+                    var _this = this;
+                    this.$scope = $scope;
                     this.personService = personService;
                     this._gravatarLink = "http://www.gravatar.com/avatar/";
                     this.repoSortOrder = "-stargazers_count";
-                    this.controllerInstance = this;
-                    var controller = this;
-                    controller.title = "Main Controller";
-                    // controller.fetchUserDataPromise(userDataCallback);
-                    function userDataCallback(data) {
+                    this.userDataCallback = function (data) {
+                        var controller = _this;
                         if ($.type(data) === "string") {
                             controller.message = data;
                         }
                         else {
                             controller.gitPerson = data;
                         }
-                    }
+                    };
+                    var controller = this;
+                    controller.title = "Main Controller";
+                    controller.fetchUserDataPromise(controller.userDataCallback);
                 }
                 MainController.prototype.fetchUserDataPromise = function (successCallback) {
                     this.personService.fetchUserDataHttp().success(function (data, status) {
@@ -30,10 +45,14 @@ var app;
                     });
                 };
                 MainController.prototype.searchUser = function (searchedUserName) {
-                    // var service = new app.Angular.Services.PersonService("$http");
-                    // var controller = new MainController(service);
-                    this.personService.fetchUserDataPromiseForUser(searchedUserName).success(function (data, status) {
-                        this.controllerInstance.userDataCallback(data);
+                    var _this = this;
+                    this.personService.fetchUserDataPromiseForUser(searchedUserName)
+                        .then(function (response) {
+                        _this.$scope.searchResult = response.data;
+                        _this.personService.fetchReposData(_this.$scope.searchResult.repos_url)
+                            .then(function (response) {
+                            _this.repos = response.data;
+                        });
                     });
                 };
                 MainController.prototype.nvl = function (inputData, replaceData) {
@@ -42,14 +61,6 @@ var app;
                     }
                     else {
                         return inputData;
-                    }
-                };
-                MainController.prototype.userDataCallback = function (data) {
-                    if ($.type(data) === "string") {
-                        this.message = data;
-                    }
-                    else {
-                        this.gitPerson = data;
                     }
                 };
                 Object.defineProperty(MainController.prototype, "gravatarLink", {
@@ -93,9 +104,10 @@ var app;
                     enumerable: true,
                     configurable: true
                 });
-                MainController.$inject = ["PersonService"];
+                MainController.$inject = ["$scope", "PersonService"];
                 return MainController;
             }());
+            Controllers.MainController = MainController;
             angular
                 .module("app.Angular.Controllers")
                 .controller("MainController", MainController);

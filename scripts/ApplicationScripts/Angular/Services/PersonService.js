@@ -21,6 +21,9 @@ var app;
                     var promise = this.http.get(url);
                     return promise;
                 };
+                PersonService.prototype.fetchReposData = function (repoLink) {
+                    return this.http.get(repoLink);
+                };
                 PersonService.prototype.returnResult = function (data) {
                     return data;
                 };

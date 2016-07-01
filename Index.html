@@ -38,7 +38,7 @@
                         </tr>
                     </thead>
                     <tbody>
-                        <tr ng-repeat="repo in repos | orderBy:main.repoSortOrder">
+                        <tr ng-repeat="repo in main.repos | orderBy:main.repoSortOrder">
                             <td>{{repo.name}}</td>
                             <td>{{repo.stargazers_count | number}}</td>
                             <td>{{repo.language}}</td>
