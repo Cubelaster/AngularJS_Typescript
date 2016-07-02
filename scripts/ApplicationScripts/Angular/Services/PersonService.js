@@ -6,29 +6,26 @@ var app;
         (function (Services) {
             var PersonService = (function () {
                 function PersonService($http) {
+                    this.$http = $http;
                     var service = this;
-                    service.http = $http;
                 }
-                PersonService.prototype.fetchUserDataHttp = function () {
-                    var promise = this.http.get('https://api.github.com/users/angular');
-                    return promise;
+                PersonService.prototype.fetchUserData = function (userString) {
+                    if (userString === undefined || userString.length === 0) {
+                        return this.fetchAngularData();
+                    }
+                    else {
+                        return this.fetchUserDataPromiseForUser(userString);
+                    }
                 };
-                PersonService.prototype.fetchUserData = function () {
-                    this.fetchUserDataHttp().then(this.returnResult, this.returnError);
+                PersonService.prototype.fetchAngularData = function () {
+                    return this.$http.get('https://api.github.com/users/angular');
                 };
                 PersonService.prototype.fetchUserDataPromiseForUser = function (searchedUser) {
                     var url = 'https://api.github.com/users/' + searchedUser;
-                    var promise = this.http.get(url);
-                    return promise;
+                    return this.$http.get(url);
                 };
                 PersonService.prototype.fetchReposData = function (repoLink) {
-                    return this.http.get(repoLink);
-                };
-                PersonService.prototype.returnResult = function (data) {
-                    return data;
-                };
-                PersonService.prototype.returnError = function (data) {
-                    return "Error occured!";
+                    return this.$http.get(repoLink);
                 };
                 PersonService.$inject = ["$http"];
                 return PersonService;

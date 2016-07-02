@@ -1,6 +1,7 @@
 namespace app.Angular.Scope {
-        export interface ISearchScope extends ng.IScope {
+        export interface IMainControllerSearchscope extends ng.IScope {
         mainCtrl: app.Angular.Controllers.MainController;
+        personService: app.Angular.Services.PersonService;
         searchResult: any;
     }
 }

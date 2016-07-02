@@ -21,9 +21,9 @@
                     <input type="search" required placeholder="Username" ng-model="main._searchedUserName" />
                     <input type="submit" value="Search">
                 </form>
-            
+
                 Order:
-                <select ng-model="repoSortOrder">
+                <select ng-model="main.repoSortOrder">
                     <option value="+name">Name</option>
                     <option value="-stargazers_count">Stars</option>
                     <option value="+language">Language</option>
@@ -49,16 +49,16 @@
 
         </div>
 
-        <div ng-controller="SubController as main">
+        <!--<div ng-controller="SubController as main">
             <h1>The title is: {{main.message}}</h1>
-        </div>
+        </div>-->
     </div>
 
-    <div id="ctrls" ng-app="app.Angular.Ctrls">
+    <!--<div id="ctrls" ng-app="app.Angular.Ctrls">
         <div ng-controller="MainCtrl as main">
             <h1>The title is: {{main.message}}</h1>
         </div>
-    </div>
+    </div>-->
 
     <!--External Scripts-->
     <script src="scripts/ExternalScripts/Angular/angular.js"></script>

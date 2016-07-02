@@ -20,12 +20,18 @@ var app;
             //     searchResult: any;
             // }
             var MainController = (function () {
-                function MainController($scope, personService) {
+                function MainController(personService) {
                     var _this = this;
-                    this.$scope = $scope;
                     this.personService = personService;
                     this._gravatarLink = "http://www.gravatar.com/avatar/";
                     this.repoSortOrder = "-stargazers_count";
+                    this.fetchUserData = function () {
+                        var controller = _this;
+                        controller.personService.fetchUserData()
+                            .then(function (response) {
+                            _this.userDataCallback(response.data);
+                        });
+                    };
                     this.userDataCallback = function (data) {
                         var controller = _this;
                         if ($.type(data) === "string") {
@@ -37,19 +43,13 @@ var app;
                     };
                     var controller = this;
                     controller.title = "Main Controller";
-                    controller.fetchUserDataPromise(controller.userDataCallback);
+                    controller.fetchUserData();
                 }
-                MainController.prototype.fetchUserDataPromise = function (successCallback) {
-                    this.personService.fetchUserDataHttp().success(function (data, status) {
-                        successCallback(data);
-                    });
-                };
                 MainController.prototype.searchUser = function (searchedUserName) {
                     var _this = this;
                     this.personService.fetchUserDataPromiseForUser(searchedUserName)
                         .then(function (response) {
-                        _this.$scope.searchResult = response.data;
-                        _this.personService.fetchReposData(_this.$scope.searchResult.repos_url)
+                        _this.personService.fetchReposData(response.data.repos_url)
                             .then(function (response) {
                             _this.repos = response.data;
                         });
@@ -104,7 +104,7 @@ var app;
                     enumerable: true,
                     configurable: true
                 });
-                MainController.$inject = ["$scope", "PersonService"];
+                MainController.$inject = ["PersonService"];
                 return MainController;
             }());
             Controllers.MainController = MainController;

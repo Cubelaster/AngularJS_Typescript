@@ -1,40 +1,32 @@
 namespace app.Angular.Services {
 
     export class PersonService implements app.Angular.ServiceContracts.IPersonService {
-        http: any;
-        static $inject = ["$http"];
         userData: any;
 
-        constructor($http: any) {
+        static $inject = ["$http"];
+        constructor(private $http: any) {
             var service = this;
-            service.http = $http
         }
 
-        fetchUserDataHttp(): any {
-            var promise = this.http.get('https://api.github.com/users/angular');
-            return promise;
+        fetchUserData(userString?: string): any {
+            if (userString === undefined || userString.length === 0) {
+                return this.fetchAngularData();
+            } else {
+                return this.fetchUserDataPromiseForUser(userString);
+            }
         }
 
-        fetchUserData(): any {
-            this.fetchUserDataHttp().then(this.returnResult, this.returnError);
+        fetchAngularData(): any {
+            return this.$http.get('https://api.github.com/users/angular');
         }
 
         fetchUserDataPromiseForUser(searchedUser: string): any {
-            var url : string = 'https://api.github.com/users/' + searchedUser;
-            var promise = this.http.get(url);
-            return promise;
+            var url: string = 'https://api.github.com/users/' + searchedUser;
+            return this.$http.get(url);
         }
 
         fetchReposData(repoLink: string): any {
-            return this.http.get(repoLink);
-        }
-
-        returnResult(data):any {
-            return data;
-        }
-
-        returnError(data):any {
-            return "Error occured!";
+            return this.$http.get(repoLink);
         }
 
     }

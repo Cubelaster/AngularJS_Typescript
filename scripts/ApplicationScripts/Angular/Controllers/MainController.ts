@@ -25,32 +25,32 @@ namespace app.Angular.Controllers {
         title: string;
         private _message: string;
         person: app.core.Models.Person;
-        gitPerson;
+        gitPerson: any;
         private _searchedUserName: string;
         private _gravatarLink: string = "http://www.gravatar.com/avatar/";
         repoSortOrder: string = "-stargazers_count";
         repos: any;
 
-        static $inject = ["$scope", "PersonService"];
-        constructor(private $scope: app.Angular.Scope.ISearchScope,
-            private personService: app.Angular.Services.PersonService) {
+        static $inject = ["PersonService"];
+        constructor( private personService: app.Angular.Services.PersonService) {
             var controller = this;
 
             controller.title = "Main Controller";
-            controller.fetchUserDataPromise(controller.userDataCallback);
+            controller.fetchUserData();
         }
 
-        fetchUserDataPromise(successCallback: Function): void {
-            this.personService.fetchUserDataHttp().success(function (data, status) {
-                successCallback(data);
-            })
+        public fetchUserData = () => {
+            var controller = this;
+            controller.personService.fetchUserData()
+                .then((response: ng.IHttpPromiseCallbackArg<any>) => {
+                    this.userDataCallback(response.data);
+                })
         }
 
         public searchUser(searchedUserName: string): void {
             this.personService.fetchUserDataPromiseForUser(searchedUserName)
                 .then((response: ng.IHttpPromiseCallbackArg<any>) => {
-                    this.$scope.searchResult = response.data;
-                    this.personService.fetchReposData(this.$scope.searchResult.repos_url)
+                    this.personService.fetchReposData(response.data.repos_url)
                         .then((response: ng.IHttpPromiseCallbackArg<any>) => {
                         this.repos = response.data;
                     })
