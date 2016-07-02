@@ -30,13 +30,20 @@ namespace app.Angular.Controllers {
         private _gravatarLink: string = "http://www.gravatar.com/avatar/";
         repoSortOrder: string = "-stargazers_count";
         repos: any;
+        remainingSeconds: number = 5;
+        countdownInterval;
+        
 
-        static $inject = ["PersonService"];
-        constructor( private personService: app.Angular.Services.PersonService) {
+        static $inject = ["PersonService", "$interval", "$log"];
+        constructor( private personService: app.Angular.Services.PersonService,
+                     private $interval: ng.IIntervalService,
+                     private $log: ng.ILogService) {
             var controller = this;
 
             controller.title = "Main Controller";
             controller.fetchUserData();
+            controller.countdownInterval = controller
+                    .$interval(controller.countdown, 1000, controller.remainingSeconds);
         }
 
         public fetchUserData = () => {
@@ -48,6 +55,11 @@ namespace app.Angular.Controllers {
         }
 
         public searchUser(searchedUserName: string): void {
+            this.$log.info("Searching for "+ searchedUserName);
+            if(this.countdownInterval){
+                this.$interval.cancel(this.countdownInterval);
+                this.remainingSeconds = null;
+            }
             this.personService.fetchUserDataPromiseForUser(searchedUserName)
                 .then((response: ng.IHttpPromiseCallbackArg<any>) => {
                     this.personService.fetchReposData(response.data.repos_url)
@@ -55,6 +67,15 @@ namespace app.Angular.Controllers {
                         this.repos = response.data;
                     })
                 });
+        }
+
+        public countdown = () => {
+            var controller = this;
+            console.log(controller.remainingSeconds);
+            controller.remainingSeconds -= 1;
+            if(controller.remainingSeconds < 1){
+                controller.searchUser(controller.searchedUserName);
+            }
         }
 
         nvl(inputData: any, replaceData?: any): any {
@@ -109,5 +130,5 @@ namespace app.Angular.Controllers {
 
     angular
         .module("app.Angular.Controllers")
-        .controller("MainController", MainController);
+        .controller("MainController", ["PersonService", "$interval", "$log", MainController]);
 }

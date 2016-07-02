@@ -21,8 +21,12 @@ namespace app.Angular.Services {
         }
 
         fetchUserDataPromiseForUser(searchedUser: string): any {
-            var url: string = 'https://api.github.com/users/' + searchedUser;
-            return this.$http.get(url);
+            if (searchedUser === undefined || searchedUser === "") {
+                return this.fetchAngularData();
+            } else {
+                var url: string = 'https://api.github.com/users/' + searchedUser;
+                return this.$http.get(url);
+            }
         }
 
         fetchReposData(repoLink: string): any {

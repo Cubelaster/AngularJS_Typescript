@@ -20,17 +20,28 @@ var app;
             //     searchResult: any;
             // }
             var MainController = (function () {
-                function MainController(personService) {
+                function MainController(personService, $interval, $log) {
                     var _this = this;
                     this.personService = personService;
+                    this.$interval = $interval;
+                    this.$log = $log;
                     this._gravatarLink = "http://www.gravatar.com/avatar/";
                     this.repoSortOrder = "-stargazers_count";
+                    this.remainingSeconds = 5;
                     this.fetchUserData = function () {
                         var controller = _this;
                         controller.personService.fetchUserData()
                             .then(function (response) {
                             _this.userDataCallback(response.data);
                         });
+                    };
+                    this.countdown = function () {
+                        var controller = _this;
+                        console.log(controller.remainingSeconds);
+                        controller.remainingSeconds -= 1;
+                        if (controller.remainingSeconds < 1) {
+                            controller.searchUser(controller.searchedUserName);
+                        }
                     };
                     this.userDataCallback = function (data) {
                         var controller = _this;
@@ -44,9 +55,16 @@ var app;
                     var controller = this;
                     controller.title = "Main Controller";
                     controller.fetchUserData();
+                    controller.countdownInterval = controller
+                        .$interval(controller.countdown, 1000, controller.remainingSeconds);
                 }
                 MainController.prototype.searchUser = function (searchedUserName) {
                     var _this = this;
+                    this.$log.info("Searching for " + searchedUserName);
+                    if (this.countdownInterval) {
+                        this.$interval.cancel(this.countdownInterval);
+                        this.remainingSeconds = null;
+                    }
                     this.personService.fetchUserDataPromiseForUser(searchedUserName)
                         .then(function (response) {
                         _this.personService.fetchReposData(response.data.repos_url)
@@ -104,13 +122,13 @@ var app;
                     enumerable: true,
                     configurable: true
                 });
-                MainController.$inject = ["PersonService"];
+                MainController.$inject = ["PersonService", "$interval", "$log"];
                 return MainController;
             }());
             Controllers.MainController = MainController;
             angular
                 .module("app.Angular.Controllers")
-                .controller("MainController", MainController);
+                .controller("MainController", ["PersonService", "$interval", "$log", MainController]);
         })(Controllers = Angular.Controllers || (Angular.Controllers = {}));
     })(Angular = app.Angular || (app.Angular = {}));
 })(app || (app = {}));

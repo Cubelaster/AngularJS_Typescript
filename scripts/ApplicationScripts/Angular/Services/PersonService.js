@@ -21,8 +21,13 @@ var app;
                     return this.$http.get('https://api.github.com/users/angular');
                 };
                 PersonService.prototype.fetchUserDataPromiseForUser = function (searchedUser) {
-                    var url = 'https://api.github.com/users/' + searchedUser;
-                    return this.$http.get(url);
+                    if (searchedUser === undefined || searchedUser === "") {
+                        return this.fetchAngularData();
+                    }
+                    else {
+                        var url = 'https://api.github.com/users/' + searchedUser;
+                        return this.$http.get(url);
+                    }
                 };
                 PersonService.prototype.fetchReposData = function (repoLink) {
                     return this.$http.get(repoLink);

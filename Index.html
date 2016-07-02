@@ -10,41 +10,23 @@
 
         <div ng-controller="MainController as main">
             <h1>The title is: {{main.message}}</h1>
+
             <div class="col-md-6">
                 <div>{{main.gitPerson.name}}</div>
                 <div>{{main.gitPerson.email}}</div>
                 <div><img ng-src="{{main.gravatarLink}}" title="{{main.gitPerson.name}}" alt="Image not accessible" />
                 </div>
             </div>
+
             <div>
+                <input ng-show="main.remainingSeconds" type="text" readonly="readonly" value="{{main.remainingSeconds}}"/>
                 <form name="searchUser" ng-submit="main.searchUser(main._searchedUserName)">
                     <input type="search" required placeholder="Username" ng-model="main._searchedUserName" />
                     <input type="submit" value="Search">
                 </form>
 
-                Order:
-                <select ng-model="main.repoSortOrder">
-                    <option value="+name">Name</option>
-                    <option value="-stargazers_count">Stars</option>
-                    <option value="+language">Language</option>
-                </select>
-
-                <table>
-                    <thead>
-                        <tr>
-                            <th>Name</th>
-                            <th>Stars</th>
-                            <th>Language</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        <tr ng-repeat="repo in main.repos | orderBy:main.repoSortOrder">
-                            <td>{{repo.name}}</td>
-                            <td>{{repo.stargazers_count | number}}</td>
-                            <td>{{repo.language}}</td>
-                        </tr>
-                    </tbody>
-                </table>
+                <div ng-include="'Views/UserDetail.html'" ng-show="main.repos">
+                </div>
             </div>
 
         </div>
