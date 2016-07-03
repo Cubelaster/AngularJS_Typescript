@@ -4,23 +4,6 @@ declare var $: JQueryStatic;
 
 namespace app.Angular.Controllers {
 
-    // var ctrlModule = angular.module('app.Angular.Controllers');
-
-    // export class MainControllerSearchDirective implements ng.IDirective {
-    //     public restrict: string = "E";
-    //     public replace: boolean = true;
-    //     public controller: string = 'MainController';
-    //     public controllerAs: string = 'main';
-    //     public scope = {};
-    // }
-
-    // ctrlModule.directive("mainCtrlSearch", [() => new app.Angular.Controllers.MainControllerSearchDirective()]);
-
-    // export interface ISearchScope extends ng.IScope {
-    //     mainCtrl: MainController;
-    //     searchResult: any;
-    // }
-
     export class MainController implements app.Angular.ControllerContracts.IAngularController {
         title: string;
         private _message: string;
@@ -32,48 +15,52 @@ namespace app.Angular.Controllers {
         repos: any;
         remainingSeconds: number = 5;
         countdownInterval;
-        
 
-        static $inject = ["PersonService", "$interval", "$log"];
-        constructor( private personService: app.Angular.Services.PersonService,
-                     private $interval: ng.IIntervalService,
-                     private $log: ng.ILogService) {
+
+        static $inject = ["GitHubService", "$interval", "$log",
+            "$anchorScroll", "$location"];
+        constructor(
+            private gitHubService: app.Angular.Services.GitHubService,
+            private $interval: ng.IIntervalService,
+            private $log: ng.ILogService,
+            private $anchorScroll: ng.IAnchorScrollService,
+            private $location: ng.ILocationService
+        ) {
             var controller = this;
 
             controller.title = "Main Controller";
             controller.fetchUserData();
             controller.countdownInterval = controller
-                    .$interval(controller.countdown, 1000, controller.remainingSeconds);
+                .$interval(controller.countdown, 1000, controller.remainingSeconds);
         }
 
         public fetchUserData = () => {
             var controller = this;
-            controller.personService.fetchUserData()
+            controller.gitHubService.fetchUserData()
                 .then((response: ng.IHttpPromiseCallbackArg<any>) => {
-                    this.userDataCallback(response.data);
+                    this.userDataCallback(response);
                 })
         }
 
         public searchUser(searchedUserName: string): void {
-            this.$log.info("Searching for "+ searchedUserName);
-            if(this.countdownInterval){
+            this.$log.info("Searching for " + searchedUserName);
+            if (this.countdownInterval) {
                 this.$interval.cancel(this.countdownInterval);
                 this.remainingSeconds = null;
             }
-            this.personService.fetchUserDataPromiseForUser(searchedUserName)
-                .then((response: ng.IHttpPromiseCallbackArg<any>) => {
-                    this.personService.fetchReposData(response.data.repos_url)
-                        .then((response: ng.IHttpPromiseCallbackArg<any>) => {
-                        this.repos = response.data;
-                    })
-                });
+            this.gitHubService.fetchReposForUser(searchedUserName)
+                .then((response: any) => {
+                    this.repos = response;
+                    this.$location.hash("userDetails");
+                    this.$anchorScroll();
+                })
         }
 
         public countdown = () => {
             var controller = this;
             console.log(controller.remainingSeconds);
             controller.remainingSeconds -= 1;
-            if(controller.remainingSeconds < 1){
+            if (controller.remainingSeconds < 1) {
                 controller.searchUser(controller.searchedUserName);
             }
         }
@@ -130,5 +117,6 @@ namespace app.Angular.Controllers {
 
     angular
         .module("app.Angular.Controllers")
-        .controller("MainController", ["PersonService", "$interval", "$log", MainController]);
+        .controller("MainController", ["GitHubService", "$interval",
+            "$log", "$anchorScroll", "$location", MainController]);
 }

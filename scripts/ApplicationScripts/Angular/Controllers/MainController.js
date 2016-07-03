@@ -6,33 +6,22 @@ var app;
     (function (Angular) {
         var Controllers;
         (function (Controllers) {
-            // var ctrlModule = angular.module('app.Angular.Controllers');
-            // export class MainControllerSearchDirective implements ng.IDirective {
-            //     public restrict: string = "E";
-            //     public replace: boolean = true;
-            //     public controller: string = 'MainController';
-            //     public controllerAs: string = 'main';
-            //     public scope = {};
-            // }
-            // ctrlModule.directive("mainCtrlSearch", [() => new app.Angular.Controllers.MainControllerSearchDirective()]);
-            // export interface ISearchScope extends ng.IScope {
-            //     mainCtrl: MainController;
-            //     searchResult: any;
-            // }
             var MainController = (function () {
-                function MainController(personService, $interval, $log) {
+                function MainController(gitHubService, $interval, $log, $anchorScroll, $location) {
                     var _this = this;
-                    this.personService = personService;
+                    this.gitHubService = gitHubService;
                     this.$interval = $interval;
                     this.$log = $log;
+                    this.$anchorScroll = $anchorScroll;
+                    this.$location = $location;
                     this._gravatarLink = "http://www.gravatar.com/avatar/";
                     this.repoSortOrder = "-stargazers_count";
                     this.remainingSeconds = 5;
                     this.fetchUserData = function () {
                         var controller = _this;
-                        controller.personService.fetchUserData()
+                        controller.gitHubService.fetchUserData()
                             .then(function (response) {
-                            _this.userDataCallback(response.data);
+                            _this.userDataCallback(response);
                         });
                     };
                     this.countdown = function () {
@@ -65,12 +54,11 @@ var app;
                         this.$interval.cancel(this.countdownInterval);
                         this.remainingSeconds = null;
                     }
-                    this.personService.fetchUserDataPromiseForUser(searchedUserName)
+                    this.gitHubService.fetchReposForUser(searchedUserName)
                         .then(function (response) {
-                        _this.personService.fetchReposData(response.data.repos_url)
-                            .then(function (response) {
-                            _this.repos = response.data;
-                        });
+                        _this.repos = response;
+                        _this.$location.hash("userDetails");
+                        _this.$anchorScroll();
                     });
                 };
                 MainController.prototype.nvl = function (inputData, replaceData) {
@@ -122,13 +110,15 @@ var app;
                     enumerable: true,
                     configurable: true
                 });
-                MainController.$inject = ["PersonService", "$interval", "$log"];
+                MainController.$inject = ["GitHubService", "$interval", "$log",
+                    "$anchorScroll", "$location"];
                 return MainController;
             }());
             Controllers.MainController = MainController;
             angular
                 .module("app.Angular.Controllers")
-                .controller("MainController", ["PersonService", "$interval", "$log", MainController]);
+                .controller("MainController", ["GitHubService", "$interval",
+                "$log", "$anchorScroll", "$location", MainController]);
         })(Controllers = Angular.Controllers || (Angular.Controllers = {}));
     })(Angular = app.Angular || (app.Angular = {}));
 })(app || (app = {}));
