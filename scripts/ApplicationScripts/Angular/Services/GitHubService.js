@@ -7,21 +7,21 @@ var app;
             var GitHubService = (function () {
                 function GitHubService($http) {
                     this.$http = $http;
+                    this.callbackFunctionResponse = function (response) {
+                        return response.data;
+                    };
+                    this.callbackFunctionData = function (data) {
+                        return data;
+                    };
                     var service = this;
                 }
                 /**Fetches the Angular data from the https://api.github.com/users/angular link. */
                 GitHubService.prototype.fetchAngularData = function () {
-                    return this.makeGetRequest('https://api.github.com/users/angular')
-                        .then(function (response) {
-                        return response.data;
-                    });
+                    return this.makeGetRequest('https://api.github.com/users/angular');
                 };
                 GitHubService.prototype.fetchUserDataForUser = function (searchedUser) {
                     var url = 'https://api.github.com/users/' + searchedUser;
-                    return this.makeGetRequest(url)
-                        .then(function (response) {
-                        return response.data;
-                    });
+                    return this.makeGetRequest(url);
                 };
                 /**
                  * Service method for data fetching.
@@ -32,10 +32,10 @@ var app;
                  */
                 GitHubService.prototype.fetchUserData = function (userString) {
                     if (userString === undefined || userString.length === 0) {
-                        return this.fetchAngularData();
+                        return this.fetchAngularData().then(this.callbackFunctionData);
                     }
                     else {
-                        return this.fetchUserDataForUser(userString);
+                        return this.fetchUserDataForUser(userString).then(this.callbackFunctionData);
                     }
                 };
                 /**First fetches a promise for the user data, and then from that data returns
@@ -46,21 +46,31 @@ var app;
                     return this.fetchUserData(user)
                         .then(function (response) {
                         return _this.fetchReposData(response.repos_url)
-                            .then(function (response) {
-                            return response;
-                        });
+                            .then(_this.callbackFunctionData);
                     });
                 };
                 /**Fetches the repositories data for a link(user). */
                 GitHubService.prototype.fetchReposData = function (repoLink) {
-                    return this.makeGetRequest(repoLink)
+                    return this.makeGetRequest(repoLink);
+                };
+                GitHubService.prototype.fetchRepoDetails = function (username, reponame) {
+                    var service = this;
+                    var repoUrl = "https://api.github.com/repos/" + username + "/" + reponame;
+                    return service.$http.get(repoUrl)
                         .then(function (response) {
-                        return response.data;
+                        service.repo = response.data;
+                        return service.$http.get(repoUrl + repoUrl + "/collaborators");
+                    })
+                        .then(function (response) {
+                        service.repo.collaborators = response.data;
+                        return service.repo;
                     });
                 };
                 /**Small helper method for doing get() function. */
                 GitHubService.prototype.makeGetRequest = function (request) {
-                    return this.$http.get(request);
+                    return this.$http.get(request)
+                        .then(this.callbackFunctionResponse)
+                        .then(this.callbackFunctionData);
                 };
                 GitHubService.$inject = ["$http"];
                 return GitHubService;

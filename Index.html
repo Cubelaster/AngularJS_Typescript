@@ -1,67 +1,30 @@
-<html>
+<html ng-app="app.Angular.Controllers">
 
 <head>
-</head>
-
-<body>
-    <h1>Welcome!</h1>
-
-    <div ng-app="app.Angular.Controllers">
-
-        <div ng-controller="MainController as main">
-            <h1>The title is: {{main.message}}</h1>
-
-            <div class="col-md-6">
-                <div>{{main.gitPerson.name}}</div>
-                <div>{{main.gitPerson.email}}</div>
-                <div><img ng-src="{{main.gravatarLink}}" title="{{main.gitPerson.name}}" alt="Image not accessible" />
-                </div>
-            </div>
-
-            <div>
-                <input ng-show="main.remainingSeconds" type="text" readonly="readonly" value="{{main.remainingSeconds}}"/>
-                <form name="searchUser" ng-submit="main.searchUser(main._searchedUserName)">
-                    <input type="search" required placeholder="Username" ng-model="main._searchedUserName" />
-                    <input type="submit" value="Search">
-                </form>
-
-                <div ng-include="'Views/UserDetail.html'" ng-show="main.repos">
-                </div>
-            </div>
-
-        </div>
-
-        <!--<div ng-controller="SubController as main">
-            <h1>The title is: {{main.message}}</h1>
-        </div>-->
-    </div>
-
-    <!--<div id="ctrls" ng-app="app.Angular.Ctrls">
-        <div ng-controller="MainCtrl as main">
-            <h1>The title is: {{main.message}}</h1>
-        </div>
-    </div>-->
-
     <!--External Scripts-->
-    <script src="scripts/ExternalScripts/Angular/angular.js"></script>
     <script src="scripts/ExternalScripts/JQuery/jquery-3.0.0.js"></script>
+    <script src="scripts/ExternalScripts/Angular/angular.js"></script>
     <script src="scripts/ExternalScripts/Angular/angular-route.js"></script>
+
     <!--Module Registration-->
     <script src="scripts/app.js"></script>
     <!--Controllers Registration-->
     <script src="scripts/ApplicationScripts/Angular/Controllers/MainController.js"></script>
-    <script src="scripts/ApplicationScripts/Angular/Controllers/SubController.js"></script>
-    <script src="scripts/ApplicationScripts/Angular/Controllers/MainCtrl.js"></script>
+    <script src="scripts/ApplicationScripts/Angular/Controllers/UserController.js"></script>
+    <script src="scripts/ApplicationScripts/Angular/Controllers/RepoController.js"></script>
+    <!--<script src="scripts/ApplicationScripts/Angular/Controllers/SubController.js"></script>
+    <script src="scripts/ApplicationScripts/Angular/Controllers/MainCtrl.js"></script>-->
     <!--Models Registration-->
-    <script src="scripts/ApplicationScripts/Angular/Models/Person.js"></script>
+    <!--<script src="scripts/ApplicationScripts/Angular/Models/Person.js"></script>-->
     <!--Services registration-->
     <script src="scripts/ApplicationScripts/Angular/Services/PersonService.js"></script>
     <script src="scripts/ApplicationScripts/Angular/Services/GitHubService.js"></script>
     <!--onLoad-->
-    <script>
-        angular.bootstrap(document.getElementById("ctrls"), ['app.Angular.Ctrls']);
-        // alert(new Date(1467296304 * 1000))
-    </script>
+</head>
+
+<body>
+    <h1>Github Viewer</h1>
+    <div ng-view></div>
 </body>
 
 </html>

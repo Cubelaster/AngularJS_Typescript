@@ -1,0 +1,7 @@
+<div>
+    <input ng-show="main.remainingSeconds" type="text" readonly="readonly" value="{{main.remainingSeconds}}" />
+    <form name="searchUser" ng-submit="main.searchUser(main._searchedUserName)">
+        <input type="search" required placeholder="Username" ng-model="main._searchedUserName" />
+        <input type="submit" value="Search">
+    </form>
+</div>
